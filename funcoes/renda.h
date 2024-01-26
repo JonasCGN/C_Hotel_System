@@ -350,4 +350,5 @@ void valores_recebidos(struct Financeiro *financeiro,int i){
         printf("Valor Total:%s\nStatus do pagamento:%s\n",(financeiro + i)->valorT,(financeiro + i)->statusPagamento);
         printf("-------------------------------------------------------\n"); 
     }
+    limparTela();
 }

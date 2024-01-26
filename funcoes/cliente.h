@@ -427,5 +427,4 @@ void excluir_cliente(struct Cliente *cliente,int n){
             printf("Saindo...");
         }
     }while(opc2 != '0');
-
 }
