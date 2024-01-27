@@ -30,12 +30,22 @@ void menu_quarto(struct Quarto *quarto){
             if(n>0){
                 menu_consultar_quarto(quarto,n);
             }else{
+<<<<<<< HEAD
                 printf("Nao ha quartos cadastrados para serem consultados");
+=======
+                printf("Não ha quartos cadastrados para serem consultados");
+>>>>>>> 8fd4f449c6e9140c1b7d3d047e7d3c242f44d503
             }
             break;
             case '3':
             if(n>0){
+<<<<<<< HEAD
                 menu_editarQuarto(quarto,n);
+=======
+
+             menu_editarQuarto(quarto,n);
+
+>>>>>>> 8fd4f449c6e9140c1b7d3d047e7d3c242f44d503
             }else{
                 printf("Nao ha quartos cadastrados para serem editados");
             }
@@ -74,14 +84,26 @@ void menu_cliente(struct Cliente *cliente){
             break;
             case '2':
                 if(n>0){
+<<<<<<< HEAD
                     menuConsultar(cliente,n);
                 }else{
                     printf("Nao ha cliente cadastrados para serem consultados");
+=======
+                menuConsultar(cliente,n);
+
+                }else{
+                    printf("Nao ha cliente cadastrados para serem consultados");
+
+>>>>>>> 8fd4f449c6e9140c1b7d3d047e7d3c242f44d503
                 }
             break;
             case '3':
                 if(n>0){
+<<<<<<< HEAD
                     menueditar(cliente,n);
+=======
+                menueditar(cliente,n);
+>>>>>>> 8fd4f449c6e9140c1b7d3d047e7d3c242f44d503
                 }else{
                     printf("Nao ha clienes cadastrados para uma consulta");
                 }

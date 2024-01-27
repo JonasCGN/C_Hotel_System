@@ -28,8 +28,10 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
     int nR = quantidade_Reservas(reserva) -1;
     char opc;
     int i=-1,j = nP,p;
-
-    do{ 
+    
+    do{
+        
+        
         printf("\nComo voce deseja procurar a reserva para check-in\n");
         printf("1-Codigo de reserva\n2-Nome do Cliente\n0-Sair\n");
         opc = recebeUmNumero(opc);
@@ -75,15 +77,6 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
                     printf("\nSaindo...");
                     break;
                 }
-
-            }else if(strcmp((reserva+i)->statusPagamento,"Check-In") == 0){
-                printf("A reserva ja foi feita Check-In");
-            }else if(strcmp((reserva+i)->statusPagamento,"Pago") == 0){
-                printf("A reserva ja foi realizado o pagamento");
-            }else if(i == -1 && opc == '1'){
-                printf("Reserva com o codigo de reserva nao encontrado!\n");
-            }else if(i == -1 && opc == '2'){
-                printf("Reserva com o nome do cliente nao encontrado!\n");
             }
         }else{
             printf("\nSaindo...");
@@ -366,55 +359,4 @@ void mostrarValores(struct Financeiro *financeiro,int i){
         printf("-------------------------------------------------------\n"); 
     }
     limparTela();
-}
-
-/*
-Fazer valores recebidos
-*/
-void valores_recebidos(struct Financeiro *financeiro){
-    int n = quantidadePagamentos(financeiro) - 1;
-    char opc;
-    char dia[3],mes[3],ano[5];
-    int data1,data2,dataC,found=0;
-    
-    do{
-        printf("----Menu Valores Recebidos----\n");
-        printf("1 - Todos\n2 - Intervalo de Tempo\n0 - Voltar\n");
-        printf("------------------------------\n");
-        opc = recebeUmNumero(opc);
-
-        switch (opc)
-        {
-        case '1':
-            mostrarValores(financeiro,-1);
-        break;
-        case '2':
-            printf("Digite o inicio do intervalo da data:");
-            recebeData(dia,mes,ano);
-            data1 = dataJuliana(atoi(dia),atoi(mes),atoi(ano));
-            printf("Digite o fim do intervalo da data:");
-            recebeData(dia,mes,ano);
-            data2 = dataJuliana(atoi(dia),atoi(mes),atoi(ano));
-
-
-            for(int i=0;i<n;i++){
-                dataC = dataJuliana(atoi((financeiro+i)->dataSaida.dia),atoi((financeiro+i)->dataSaida.mes),atoi((financeiro+i)->dataSaida.ano));
-                if((dataC >= data1 && dataC <= data2)){
-                    mostrarValores(financeiro,i);
-                    found = 1;
-                }
-                if(!found)
-                    printf("Nao ha valores recebidos durante o intervalo dado!");
-            }
-        break;
-        case '0':
-            printf("Voltando...");
-        break;
-        default:
-            printf("Opcao Invalida");
-            break;
-        }
-        limparTela();
-    }while(opc != '0');
-    
 }
