@@ -31,7 +31,6 @@ struct Hora{
     char min[3];
     char segundos[3];
 };
-
 struct Financeiro{
     char codigoReserva[6];
     char numeroQuarto[4];

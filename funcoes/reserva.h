@@ -357,7 +357,6 @@ int consultarDadosRes1(struct Reserva *reserva,int opc){
             verifica_letra(nome,1);
 
             for(i=0;i < n;i++){
-                printf("%s\n",(reserva+i)->statusPagamento);
                 if(strcmp((reserva+i)->nomeCliente,nome) == 0 && strcmp((reserva+i)->statusPagamento,"Pendente")==0){
                     found=1;
                     break;

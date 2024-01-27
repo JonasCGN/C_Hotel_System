@@ -114,6 +114,8 @@ void verifica_letra(char *v,int opc){
             *(v+i) = '\0';
             printf("\b \b");
             i--;
+        }else if(i == 0){
+            c=14;
         }
 
     }while(c != 13);

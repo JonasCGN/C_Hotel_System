@@ -28,7 +28,7 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
     int nR = quantidade_Reservas(reserva) -1;
     char opc;
     int i=-1,j = nP,p;
-
+    
     do{
         
         
