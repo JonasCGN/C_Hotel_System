@@ -43,34 +43,33 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
             limparTela();
             if(strcmp((reserva+i)->statusPagamento,"Pendente") == 0){
                 if(i >= 0){
-                for(p=0;p < nQ ;p++){
-                    if(strcmp((reserva+i)->numeroQuarto,(quarto+p)->numero) == 0 && !(strcmp((reserva+i)->statusPagamento,"Pago")==0)){
-                        strcpy((quarto+p)->status,"Ocupado");
-                        break;
+                    for(p=0;p < nQ ;p++){
+                        if(strcmp((reserva+i)->numeroQuarto,(quarto+p)->numero) == 0 && !(strcmp((reserva+i)->statusPagamento,"Pago")==0)){
+                            strcpy((quarto+p)->status,"Ocupado");
+                            break;
+                        }
                     }
+    
+                    cadastrarRegistradoQuartos(quarto,nQ);
+    
+                    strcpy((reserva+i)->statusPagamento,"Check-In");
+    
+                    strcpy((financeiro+j)->numeroQuarto,(quarto+p)->numero);
+    
+                    dHA = localtime(&segundos);
+                    sprintf((financeiro+j)->horaEntrada.horas,"%d",dHA->tm_hour);
+                    sprintf((financeiro+j)->horaEntrada.min,"%d",dHA->tm_min);
+                    sprintf((financeiro+j)->horaEntrada.segundos,"%d",dHA->tm_sec);
+                    sprintf((financeiro+j)->horaSaida.horas,"23");
+                    sprintf((financeiro+j)->horaSaida.min,"59");
+                    sprintf((financeiro+j)->horaSaida.segundos,"59");
+    
+                    resgataDados(reserva,financeiro,i,j);
+    
+                    inserirDadosPagamentos(financeiro,j,arq);
+                    
+                    cadastrarRegistradosReservas(reserva,nR);
                 }
-
-                cadastrarRegistradoQuartos(quarto,nQ);
-
-                strcpy((reserva+i)->statusPagamento,"Check-In");
-
-                strcpy((financeiro+j)->numeroQuarto,(quarto+p)->numero);
-
-                dHA = localtime(&segundos);
-                sprintf((financeiro+j)->horaEntrada.horas,"%d",dHA->tm_hour);
-                sprintf((financeiro+j)->horaEntrada.min,"%d",dHA->tm_min);
-                sprintf((financeiro+j)->horaEntrada.segundos,"%d",dHA->tm_sec);
-                sprintf((financeiro+j)->horaSaida.horas,"23");
-                sprintf((financeiro+j)->horaSaida.min,"59");
-                sprintf((financeiro+j)->horaSaida.segundos,"59");
-
-                resgataDados(reserva,financeiro,i,j);
-
-                inserirDadosPagamentos(financeiro,j,arq);
-                
-                cadastrarRegistradosReservas(reserva,nR);
-
-            }
             
                 printf("Ainda deseja continuar(S/N):");
                 opc = getche();
