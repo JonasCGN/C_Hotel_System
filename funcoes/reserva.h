@@ -343,7 +343,7 @@ int consultarDadosRes1(struct Reserva *reserva,int opc){
             verifica_n_int(nome,0);
 
             for(i=0;i < n;i++){
-                if(strcmp((reserva+i)->codigoReserva,nome) == 0 && strcmp((reserva+i)->statusPagamento,"Pendente")==0){
+                if(strcmp((reserva+i)->codigoReserva,nome) == 0){
                     found=1;
                     break;
                 }
@@ -357,7 +357,7 @@ int consultarDadosRes1(struct Reserva *reserva,int opc){
             verifica_letra(nome,1);
 
             for(i=0;i < n;i++){
-                if(strcmp((reserva+i)->nomeCliente,nome) == 0 && strcmp((reserva+i)->statusPagamento,"Pendente")==0){
+                if(strcmp((reserva+i)->nomeCliente,nome) == 0){
                     found=1;
                     break;
                 }
@@ -432,27 +432,30 @@ void excluir_reserva(struct Reserva *reserva,int n){
     char opc2,opc;
     
     mostrarReservas(reserva,-1);
-
-
+        
     do{
         printf("Como voce deseja procurar o cliente para remove-lo:\n");
         printf("1-Codigo de Reserva\n2-Nome do Cliente\n0-Sair\n");
         opc2 = recebeUmNumero(opc2);
 
         printf("\n");
-
         
         if(opc2 != '0'){
 
             i = consultarDadosRes2(reserva,opc2);
 
-            strcpy((reserva+i)->codigoReserva,"");
+            if(strcmp((reserva+i)->statusPagamento,"Check-In")==0){
+                printf("\nO cliente informado nao pode ser excluido pois encontra-se em pendencia com o pagamento!\n");
+                limparTela();
+            }else{
+                strcpy((reserva+i)->codigoReserva,"");
             
-            cadastrarRegistradosReservas(reserva,n);
-            
-            reserva = (struct Reserva *)realloc(reserva,(n-1)*sizeof(struct Reserva));
+                cadastrarRegistradosReservas(reserva,n);
+                
+                reserva = (struct Reserva *)realloc(reserva,(n-1)*sizeof(struct Reserva));
 
-            printf("\nReserva Removida com Sucesso!!\n");
+                printf("\nReserva Removida com Sucesso!!\n");
+            }
 
             printf("Ainda deseja continuar removendo(S/N):");
             opc = getche();
@@ -460,11 +463,9 @@ void excluir_reserva(struct Reserva *reserva,int n){
                     printf("Saindo...");
                     break;
             }
-            limparTela();
         }else{
             printf("Saindo...");
         }
     }while(opc2 != '0');
-
     limparTela();
 }

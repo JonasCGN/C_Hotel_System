@@ -22,16 +22,30 @@ void menu_quarto(struct Quarto *quarto){
         limparTela();
         switch(opc){
             case '1':
-                n = cadastrar_quarto(quarto,n);
+
+            n = cadastrar_quarto(quarto,n);
+            
             break;
             case '2':
+            if(n>0){
                 menu_consultar_quarto(quarto,n);
+            }else{
+                printf("Nao ha quartos cadastrados para serem consultados");
+            }
             break;
             case '3':
+            if(n>0){
                 menu_editarQuarto(quarto,n);
+            }else{
+                printf("Nao ha quartos cadastrados para serem editados");
+            }
             break;
             case '4':
+            if(n>0){
                 excluir_quarto(quarto,n);
+            }else{
+                printf("Nao ha quartos cadastrados para serem excluidos");
+            }
             break;
             case '0':
                 printf("Saindo...");
@@ -42,6 +56,7 @@ void menu_quarto(struct Quarto *quarto){
         limparTela();
     }while(opc != '0');
 }
+
 
 void menu_cliente(struct Cliente *cliente){
     int n = quantidadeCliente(cliente) - 1;
@@ -58,13 +73,25 @@ void menu_cliente(struct Cliente *cliente){
                 n = cadastrar_cliente(cliente,n);
             break;
             case '2':
-                menuConsultar(cliente,n);
+                if(n>0){
+                    menuConsultar(cliente,n);
+                }else{
+                    printf("Nao ha cliente cadastrados para serem consultados");
+                }
             break;
             case '3':
-                menueditar(cliente,n);
+                if(n>0){
+                    menueditar(cliente,n);
+                }else{
+                    printf("Nao ha clienes cadastrados para uma consulta");
+                }
             break;
             case '4':
+            if(n>0){
                 excluir_cliente(cliente,n);
+            }else{
+                printf("Nao ha clientes para serem excluidos");
+            }
             break;
             case '0':
                 printf("Saindo...");
@@ -78,6 +105,7 @@ void menu_cliente(struct Cliente *cliente){
 
 void menu_reservas(struct Cliente *cliente,struct Quarto *quarto,struct Reserva *reserva,struct Financeiro *financeiro){   
     int nR = quantidade_Reservas(reserva) - 1;
+    int nP =  quantidadePagamentos(financeiro)-1;
 
     char opc;
     do{
@@ -93,19 +121,38 @@ void menu_reservas(struct Cliente *cliente,struct Quarto *quarto,struct Reserva 
                 nR = realizar_reserva(cliente,quarto,reserva,nR);
             break;
             case '2':
-                realizar_checkin(reserva,financeiro,quarto);
+                if(nR>0)
+                    realizar_checkin(reserva,financeiro,quarto);
+                else
+                    printf("Nao ha reservas para serem realizadas check-in");
             break;
             case '3':
-                realizar_pagamento(reserva,financeiro,quarto);
+                if(nR>0)
+                    realizar_pagamento(reserva,financeiro,quarto);
+                else
+                    printf("Nao ha reservas para serem realizadas pagamentos");
             break;
             case '4':
-                menu_consultarReservas(reserva,nR);
+                if(nR>0)
+                    menu_consultarReservas(reserva,nR);
+                else
+                    printf("Nao ha reservas para serem consultadas!");
             break;
             case '5':
-                excluir_reserva(reserva,nR);
+                if(nR>0)
+                    excluir_reserva(reserva,nR);
+                else
+                    printf("Nao ha reservas para serem excluidas!");
             break;
             case '6':
-                valores_recebidos(financeiro,-1);
+            /*
+            Fazer valores recebidos
+            */  
+                if(nP>0)
+                    valores_recebidos(financeiro);
+                else{
+                    printf("Nao ha valores recebidos!");
+                }
             break;
             case '0':
                 printf("Saindo...");
@@ -113,5 +160,6 @@ void menu_reservas(struct Cliente *cliente,struct Quarto *quarto,struct Reserva 
             default:
                 printf("Opcao Invalida!");
         }
+        limparTela();
     }while(opc != '0');
 }

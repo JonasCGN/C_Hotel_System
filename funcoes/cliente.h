@@ -11,7 +11,10 @@ void editar_cliente(struct Cliente *cliente,int n,int i,int opc);
 void excluir_cliente(struct Cliente *cliente,int n);
 void menueditar(struct Cliente *cliente,int n);
 void cadastrar_registrados(struct Cliente *cliente,int n);
-
+int verificaCPFR(struct Cliente *cliente,char *v,int c);
+int verificaRG(struct Cliente *cliente,char *v,int c);
+int verificaTEL(struct Cliente *cliente,char *v,int c);
+int verificaEmail(struct Cliente *cliente,char *v,int c);
 
 /* armazenando informações como nome, CPF, RG, telefone, endereço e e-mail*/
 int cadastrar_cliente(struct Cliente *cliente,int n){
@@ -31,30 +34,52 @@ int cadastrar_cliente(struct Cliente *cliente,int n){
 
     i = (n - qtdC);
 
-    while(i < n){
-    /*Lembrar de ajeitar isso*/
+    while(i < n){        
         printf("Digite o nome do cliente %d:",i+1);
         verifica_letra((cliente+i)->nCT,1);
         printf("\n");
+        
         printf("Digite o CPF do cliente %d:",i+1);
-        verifica_n_int((cliente+i)->cpf,1);
+        do{
+            verifica_n_int((cliente+i)->cpf,1);
+
+            if(verificaCPFR(cliente,(cliente+i)->cpf,i) == 0){
+                printf("\nEste CPF ja esta registrado\n");
+            }
+        }while(verificaCPFR(cliente,(cliente+i)->cpf,i) == 0);
         printf("\n");
+        
         printf("Digite o RG do cliente %d:",i+1);
-        verifica_n_int((cliente+i)->rg,2);
+        do{
+            verifica_n_int((cliente+i)->rg,2);
+            if(verificaRG(cliente,(cliente+i)->rg,i) == 0){
+                printf("\nEste RG ja esta registrado\n");
+            }
+        }while(verificaRG(cliente,(cliente+i)->rg,i) == 0);
         printf("\n");
+        
         printf("Digite o telefone do cliente %d:",i+1);
-        verifica_n_int((cliente+i)->tel,3);
+        do{
+            verifica_n_int((cliente+i)->tel,3);
+            if(verificaTEL(cliente,(cliente+i)->tel,i) == 0){
+                printf("\nEste RG ja esta registrado\n");
+            }
+        }while(verificaTEL(cliente,(cliente+i)->tel,i) == 0);
         printf("\n");
+        
         printf("Digite o endereco do cliente %d:", i+1);
         gets((cliente+i)->endereco);
         fflush(stdin);
+
         printf("Digite o endereco de e-mail do cliente %d:",i+1);
         do{
-            gets((cliente+i)->email);
-            if(verifica_email((cliente+i)->email) == 0)
-                printf("Error, nao coloque espaço no email:");
-        }while(verifica_email((cliente+i)->email) == 0);
-        
+            do{
+                gets((cliente+i)->email);
+                    if(verifica_email((cliente+i)->email) == 0)
+                        printf("Error, nao coloque espaço no email:");
+            }while(verifica_email((cliente+i)->email) == 0);
+        }while(verificaEmail(cliente,(cliente+i)->email,i));
+            
         fflush(stdin);
         
         fwrite((cliente+i)->nCT,sizeof(char),sizeof((cliente+i)->nCT),arq);
@@ -427,4 +452,48 @@ void excluir_cliente(struct Cliente *cliente,int n){
             printf("Saindo...");
         }
     }while(opc2 != '0');
+}
+
+int verificaCPFR(struct Cliente *cliente,char *v,int c){
+    int n = quantidadeCliente(cliente) - 1;
+    for(int i=0;i < n ;i++){
+        if(strcmp((cliente+i)->cpf,v) == 0 && i != c){
+            return 0;
+            break;
+        }
+    }
+    return 1;
+}
+
+int verificaRG(struct Cliente *cliente,char *v,int c){
+    int n = quantidadeCliente(cliente) - 1;
+    for(int i=0;i < n ;i++){
+        if(strcmp((cliente+i)->rg,v) == 0 && i != c){
+            return 0;
+            break;
+        }
+    }
+    return 1;
+}
+
+int verificaTEL(struct Cliente *cliente,char *v,int c){
+    int n = quantidadeCliente(cliente) - 1;
+    for(int i=0;i < n ;i++){
+        if(strcmp((cliente+i)->tel,v) == 0 && i != c){
+            return 0;
+            break;
+        }
+    }
+    return 1;
+}
+
+int verificaEmail(struct Cliente *cliente,char *v,int c){
+    int n = quantidadeCliente(cliente) - 1;
+    for(int i=0;i < n ;i++){
+        if(strcmp((cliente+i)->email,v) == 0 && i != c){
+            return 0;
+            break;
+        }
+    }
+    return 1;
 }

@@ -13,9 +13,9 @@ void inserirDadosPagamentos(struct Financeiro *financeiro, int i,FILE *arq);
 int consultarDadosPag(struct Financeiro *financeiro,char opc,char *v);
 int consultarDadosRes(struct Reserva *reserva,int opc,char *v);
 int quantidadePagamentos(struct Financeiro *financeiro);
-void valores_recebidos(struct Financeiro *financeiro,int i);
+void valores_recebidos(struct Financeiro *financeiro);
 
-/*Fazer Verificacao so pode fazer Check-In com status pendente*/
+
 void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,struct Quarto *quarto){
     FILE *arq=fopen("../database/arquivo3.bin","a+b");
 
@@ -28,10 +28,8 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
     int nR = quantidade_Reservas(reserva) -1;
     char opc;
     int i=-1,j = nP,p;
-    
-    do{
-        
-        
+
+    do{ 
         printf("\nComo voce deseja procurar a reserva para check-in\n");
         printf("1-Codigo de reserva\n2-Nome do Cliente\n0-Sair\n");
         opc = recebeUmNumero(opc);
@@ -41,51 +39,59 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
             i = consultarDadosRes1(reserva,opc);
             
             limparTela();
-
-            if(i >= 0){
-                for(p=0;p < nQ ;p++){
-                    if(strcmp((reserva+i)->numeroQuarto,(quarto+p)->numero) == 0 && strcmp((reserva+i)->statusPagamento,"Pendente")==0){
-                        strcpy((quarto+p)->status,"Ocupado");
-                        break;
+            if(strcmp((reserva+i)->statusPagamento,"Pendente") == 0){
+                if(i >= 0){
+                    for(p=0;p < nQ ;p++){
+                        if(strcmp((reserva+i)->numeroQuarto,(quarto+p)->numero) == 0 && !(strcmp((reserva+i)->statusPagamento,"Pago")==0)){
+                            strcpy((quarto+p)->status,"Ocupado");
+                            break;
+                        }
                     }
+    
+                    cadastrarRegistradoQuartos(quarto,nQ);
+    
+                    strcpy((reserva+i)->statusPagamento,"Check-In");
+    
+                    strcpy((financeiro+j)->numeroQuarto,(quarto+p)->numero);
+    
+                    dHA = localtime(&segundos);
+                    sprintf((financeiro+j)->horaEntrada.horas,"%d",dHA->tm_hour);
+                    sprintf((financeiro+j)->horaEntrada.min,"%d",dHA->tm_min);
+                    sprintf((financeiro+j)->horaEntrada.segundos,"%d",dHA->tm_sec);
+                    sprintf((financeiro+j)->horaSaida.horas,"23");
+                    sprintf((financeiro+j)->horaSaida.min,"59");
+                    sprintf((financeiro+j)->horaSaida.segundos,"59");
+    
+                    resgataDados(reserva,financeiro,i,j);
+    
+                    inserirDadosPagamentos(financeiro,j,arq);
+                    
+                    cadastrarRegistradosReservas(reserva,nR);
                 }
-
-                cadastrarRegistradoQuartos(quarto,nQ);
-
-                strcpy((reserva+i)->statusPagamento,"Check-In");
-
-                strcpy((financeiro+j)->numeroQuarto,(quarto+p)->numero);
-
-                dHA = localtime(&segundos);
-                sprintf((financeiro+j)->horaEntrada.horas,"%d",dHA->tm_hour);
-                sprintf((financeiro+j)->horaEntrada.min,"%d",dHA->tm_min);
-                sprintf((financeiro+j)->horaEntrada.segundos,"%d",dHA->tm_sec);
-                sprintf((financeiro+j)->horaSaida.horas,"23");
-                sprintf((financeiro+j)->horaSaida.min,"59");
-                sprintf((financeiro+j)->horaSaida.segundos,"59");
-
-                resgataDados(reserva,financeiro,i,j);
-
-                inserirDadosPagamentos(financeiro,j,arq);
-                
-                cadastrarRegistradosReservas(reserva,nR);
-
+            
                 printf("Ainda deseja continuar(S/N):");
                 opc = getche();
                 if(opc == 'N' || opc == 'n'){
                     printf("\nSaindo...");
                     break;
                 }
+
+            }else if(strcmp((reserva+i)->statusPagamento,"Check-In") == 0){
+                printf("A reserva ja foi feita Check-In");
+            }else if(strcmp((reserva+i)->statusPagamento,"Pago") == 0){
+                printf("A reserva ja foi realizado o pagamento");
+            }else if(i == -1 && opc == '1'){
+                printf("Reserva com o codigo de reserva nao encontrado!\n");
+            }else if(i == -1 && opc == '2'){
+                printf("Reserva com o nome do cliente nao encontrado!\n");
             }
         }else{
             printf("\nSaindo...");
         }
+        limparTela();
 
     }while(opc != '0');
-    
-    limparTela();
-    fclose(arq);
-    
+    fclose(arq);    
 }
 
 void resgataDados(struct Reserva *reserva, struct Financeiro *financeiro,int i,int j){
@@ -340,7 +346,7 @@ void cadastrarPagamentosRegistrados(struct Financeiro *financeiro,int n){
     fclose(arq);
 }
 
-void valores_recebidos(struct Financeiro *financeiro,int i){
+void mostrarValores(struct Financeiro *financeiro,int i){
     int n = quantidadePagamentos(financeiro) - 1;
     if(i == -1){
         for(i=0;i<n;i++){
@@ -360,4 +366,55 @@ void valores_recebidos(struct Financeiro *financeiro,int i){
         printf("-------------------------------------------------------\n"); 
     }
     limparTela();
+}
+
+/*
+Fazer valores recebidos
+*/
+void valores_recebidos(struct Financeiro *financeiro){
+    int n = quantidadePagamentos(financeiro) - 1;
+    char opc;
+    char dia[3],mes[3],ano[5];
+    int data1,data2,dataC,found=0;
+    
+    do{
+        printf("----Menu Valores Recebidos----\n");
+        printf("1 - Todos\n2 - Intervalo de Tempo\n0 - Voltar\n");
+        printf("------------------------------\n");
+        opc = recebeUmNumero(opc);
+
+        switch (opc)
+        {
+        case '1':
+            mostrarValores(financeiro,-1);
+        break;
+        case '2':
+            printf("Digite o inicio do intervalo da data:");
+            recebeData(dia,mes,ano);
+            data1 = dataJuliana(atoi(dia),atoi(mes),atoi(ano));
+            printf("Digite o fim do intervalo da data:");
+            recebeData(dia,mes,ano);
+            data2 = dataJuliana(atoi(dia),atoi(mes),atoi(ano));
+
+
+            for(int i=0;i<n;i++){
+                dataC = dataJuliana(atoi((financeiro+i)->dataSaida.dia),atoi((financeiro+i)->dataSaida.mes),atoi((financeiro+i)->dataSaida.ano));
+                if((dataC >= data1 && dataC <= data2)){
+                    mostrarValores(financeiro,i);
+                    found = 1;
+                }
+                if(!found)
+                    printf("Nao ha valores recebidos durante o intervalo dado!");
+            }
+        break;
+        case '0':
+            printf("Voltando...");
+        break;
+        default:
+            printf("Opcao Invalida");
+            break;
+        }
+        limparTela();
+    }while(opc != '0');
+    
 }
