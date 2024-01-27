@@ -28,7 +28,7 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
     int nR = quantidade_Reservas(reserva) -1;
     char opc;
     int i=-1,j = nP,p;
-    
+
     do{
         
         
@@ -41,10 +41,10 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
             i = consultarDadosRes1(reserva,opc);
             
             limparTela();
-
-            if(i >= 0){
+            if(strcmp((reserva+i)->statusPagamento,"Pendente") == 0){
+                if(i >= 0){
                 for(p=0;p < nQ ;p++){
-                    if(strcmp((reserva+i)->numeroQuarto,(quarto+p)->numero) == 0 && strcmp((reserva+i)->statusPagamento,"Pendente")==0){
+                    if(strcmp((reserva+i)->numeroQuarto,(quarto+p)->numero) == 0 && !(strcmp((reserva+i)->statusPagamento,"Pago")==0)){
                         strcpy((quarto+p)->status,"Ocupado");
                         break;
                     }
@@ -70,12 +70,18 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
                 
                 cadastrarRegistradosReservas(reserva,nR);
 
+            }
+            
                 printf("Ainda deseja continuar(S/N):");
                 opc = getche();
                 if(opc == 'N' || opc == 'n'){
                     printf("\nSaindo...");
                     break;
                 }
+            }else if(strcmp((reserva+i)->statusPagamento,"Check-In") == 0){
+                printf("A reserva ja foi feita Check-In");
+            }else if(strcmp((reserva+i)->statusPagamento,"Pago") == 0){
+                printf("A reserva ja foi realizado o pagamento");
             }
         }else{
             printf("\nSaindo...");
