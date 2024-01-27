@@ -281,3 +281,11 @@ void valorDiaria(char *vR,char *v,int dia){
     
     sprintf(vR,"%.2f",valor);
 }
+
+int verificaEntreData(int deE,int dsS,int deE2,int dsS2){
+    if(((deE >= deE2 && deE <= dsS2) || (dsS >= deE2 && dsS <= dsS2)) || ((deE2 >= deE && deE2 <= dsS) || (dsS2 >= deE && dsS2 <= dsS))){
+        return 0;
+    }else{
+        return 1;
+    }
+}

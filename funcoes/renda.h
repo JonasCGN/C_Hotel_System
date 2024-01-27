@@ -15,45 +15,46 @@ int consultarDadosRes(struct Reserva *reserva,int opc,char *v);
 int quantidadePagamentos(struct Financeiro *financeiro);
 void valores_recebidos(struct Financeiro *financeiro,int i);
 
+/*Fazer Verificacao so pode fazer Check-In com status pendente*/
 void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,struct Quarto *quarto){
     FILE *arq=fopen("../database/arquivo3.bin","a+b");
-    int n = quantidade_Reservas(reserva) - 1;
 
     struct tm *dHA;
     time_t segundos;
     time(&segundos);
 
+    int nP = quantidadePagamentos(financeiro) - 1;
     int nQ = quantidadeQuartos(quarto) - 1;
+    int nR = quantidade_Reservas(reserva) -1;
     char opc;
-    int i=-1;
+    int i=-1,j = nP,p;
 
     do{
-        int nR = quantidadePagamentos(financeiro) - 1;
-        int j = nR;
+        
         
         printf("\nComo voce deseja procurar a reserva para check-in\n");
         printf("1-Codigo de reserva\n2-Nome do Cliente\n0-Sair\n");
         opc = recebeUmNumero(opc);
 
         if(opc != '0'){
+            printf("\n");
+            i = consultarDadosRes1(reserva,opc);
             
-            i = consultar_reservas(reserva,n,opc);
-            
-            printf("\n--------%d--------\n",i);
-
             limparTela();
 
             if(i >= 0){
-                for(int j=0;j < nQ ;j++){
-                    if(strcmp((reserva+i)->numeroQuarto,(quarto+j)->numero)==0){
-                        strcpy((quarto+j)->status,"Ocupado");
+                for(p=0;p < nQ ;p++){
+                    if(strcmp((reserva+i)->numeroQuarto,(quarto+p)->numero) == 0 && strcmp((reserva+i)->statusPagamento,"Pendente")==0){
+                        strcpy((quarto+p)->status,"Ocupado");
                         break;
                     }
                 }
 
                 cadastrarRegistradoQuartos(quarto,nQ);
 
-                strcpy((financeiro+j)->numeroQuarto,(quarto+j)->numero);
+                strcpy((reserva+i)->statusPagamento,"Check-In");
+
+                strcpy((financeiro+j)->numeroQuarto,(quarto+p)->numero);
 
                 dHA = localtime(&segundos);
                 sprintf((financeiro+j)->horaEntrada.horas,"%d",dHA->tm_hour);
@@ -66,6 +67,8 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
                 resgataDados(reserva,financeiro,i,j);
 
                 inserirDadosPagamentos(financeiro,j,arq);
+                
+                cadastrarRegistradosReservas(reserva,nR);
 
                 printf("Ainda deseja continuar(S/N):");
                 opc = getche();
@@ -112,8 +115,6 @@ int consultarDadosPag(struct Financeiro *financeiro,char opc,char *nome){
                     break;
                 }
             }
-            if(!found)
-                printf("\nNao foram encontrados nenhuma reserva com este codigo!\n");
         break;
         case '2':
             for(i=0;i<n;i++){
@@ -121,9 +122,7 @@ int consultarDadosPag(struct Financeiro *financeiro,char opc,char *nome){
                     found=1;
                     break;
                 }
-            }
-            if(!found)
-                printf("\nNao foram encontrados nenhuma reserva com este CPF!\n");
+            }                
         break;
         case '0':
 
@@ -137,6 +136,11 @@ int consultarDadosPag(struct Financeiro *financeiro,char opc,char *nome){
         return -1;
 }
 
+/*
+Okay..., só funciona se achar o codigo ou o nome do cliente, e o status de pagamento que esteja pendente retorna 1,
+se as condicoes nao forem aceita, retorna -1
+*/
+
 int consultarDadosRes(struct Reserva *reserva,int opc,char *nome){
     int n = quantidade_Reservas(reserva) - 1; 
     int found=0,i;
@@ -144,32 +148,25 @@ int consultarDadosRes(struct Reserva *reserva,int opc,char *nome){
     switch(opc){
         case '1':
             for(i=0;i < n;i++){
-                if(strcmp((reserva+i)->codigoReserva,nome)==0){
+                if(strcmp((reserva+i)->codigoReserva,nome) == 0){
                     found=1;
                     break;
                 }
             }
-            if(!found)
-                printf("\nNao foram encontrados nenhuma reserva com este codigo!\n");
         break;
         case '2':
 
                 for(i=0;i < n;i++){
-                    if(strcmp((reserva+i)->cpfCliente,nome)==0){
+                    if(strcmp((reserva+i)->cpfCliente,nome) == 0){
                         found=1;
                         break;
                     }
-                }
-                if(!found){
-                    printf("\nNao foram encontrados nenhuma reserva com este CPF!\n");
-                    break;
                 }
         break;
         case '0':
             printf("Saindo...");
         default:
             printf("Opcao invalida");
-
     }
     if(found)
         return i;
@@ -186,7 +183,8 @@ void realizar_pagamento(struct Reserva *reserva, struct Financeiro *financeiro, 
     int nP = quantidadePagamentos(financeiro) - 1;
     int nQ = quantidadeQuartos(quarto) - 1;
     char opc,nome[12];
-    int i,j;
+    //J para financeiro,i para reservas, q para quartos
+    int i,j,q;
     do{
         
         printf("\nComo voce deseja procurar a reserva para fazer o pagamento:\n");
@@ -199,37 +197,48 @@ void realizar_pagamento(struct Reserva *reserva, struct Financeiro *financeiro, 
                 printf("Digite o Codigo de Reserva:");
                 verifica_n_int(nome,0);
 
-                j = consultarDadosPag(financeiro,opc,nome);
                 i = consultarDadosRes(reserva,opc,nome);
+                j = consultarDadosPag(financeiro,opc,nome);
             }else if(opc == '2'){
                 printf("Digite o CPF do Cliente:");
                 verifica_n_int(nome,1);
 
-                j = consultarDadosPag(financeiro,opc,nome);
                 i = consultarDadosRes(reserva,opc,nome);
+                j = consultarDadosPag(financeiro,opc,nome);
             }
-
-            printf("O valor a ser pago eh %s:", (financeiro+j)->valorT);
             
-            limparTela();
+            if(strcmp((reserva+i)->statusPagamento,"Pendente")==0  || strcmp((financeiro+j)->statusPagamento,"Pendente") == 0){
+                printf("\nPor favor faca o Check-In antes de Realizar o Pagamento");
+            }else if(strcmp((reserva+i)->statusPagamento,"Pago")==0  || strcmp((financeiro+j)->statusPagamento,"Pago") == 0){
+                printf("\nEsta reserva foi Concluida!");
+            }else if((i == -1 || j == -1) && opc == 1){
+                printf("\nNao foram encontrados nenhuma reserva com este codigo para pagamento!\n");
+            }else if((i == -1 || j == -1) && opc == 2){
+                printf("\nNao foram encontrados nenhuma reserva com este CPF para pagamento!\n");
+            }else{
+                printf("\nO valor a ser pago eh R$%s:", (financeiro+j)->valorT);
+                
+                limparTela();
 
-            if(i >= 0){
-                for(int j=0;j < nQ ;j++){
-                    if(strcmp((reserva+i)->numeroQuarto,(quarto+j)->numero)==0){
-                        strcpy((quarto+j)->status,"Livre");
+                for(q=0;q < nQ ;q++){
+                    if(strcmp((reserva+i)->numeroQuarto,(quarto+q)->numero)==0){
+                        printf("\n---------%s--------\n", (quarto+q)->numero);
+                        strcpy((quarto+q)->status,"Livre");
                         break;
                     }
                 }
-                strcpy((reserva+i)->statusPagamento,"Pago");
-                strcpy((financeiro+i)->statusPagamento,"Pago");
 
+                resgataDados(reserva,financeiro,i,j);
+
+                strcpy((reserva+i)->statusPagamento,"Pago");
+                strcpy((financeiro+j)->statusPagamento,"Pago");
+                strcpy((financeiro+j)->numeroQuarto,(quarto+q)->numero);
 
                 dHA = localtime(&segundos);
                 sprintf((financeiro+j)->horaSaida.horas,"%d",dHA->tm_hour);
                 sprintf((financeiro+j)->horaSaida.min,"%d",dHA->tm_min);
                 sprintf((financeiro+j)->horaSaida.segundos,"%d",dHA->tm_sec);
 
-                resgataDados(reserva,financeiro,i,j);
                 
                 cadastrarRegistradoQuartos(quarto,nQ);
                 cadastrarPagamentosRegistrados(financeiro,nP);

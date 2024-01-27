@@ -216,48 +216,61 @@ void cadastrarRegistradoQuartos(struct Quarto *quarto,int n){
 void menu_editarQuarto(struct Quarto *quarto,int n){
     char opc,num[3];
 
-    int i,found = 0;
+    int i,found = 0,q=0;
 
     mostrar_quarto(quarto,-1);
 
     do{
-        printf("O que voce deseja editar:");
-        printf("\n1-Tipo\n2-Valor da Diaria\n3-Alterar Tudo\n0-Sair\n");
-        opc = recebeUmNumero(opc);
+        printf("\n-----------------------------------------------------\n");
+        printf("Por favor, digite o numero do quarto que deseja editar:\n");
+        printf("-------------------------------------------------------\n");
+        verifica_n_int(num,0);
 
-        
-        limparTela();
-
-        if(opc != '0'){
-            printf("\n-----------------------------------------------------\n");
-            printf("Por favor, digite o numero do quarto que deseja editar:\n");
-            printf("-------------------------------------------------------\n");
-            verifica_n_int(num,0);
-            
-            limparTela();
-
-            for(i=0;i<n;i++){
-                if(strcmp((quarto+i)->numero,num)==0){
-                    mostrar_quarto(quarto,i);
-                    found=1;
-                    break;
-                }
-            }
-            if(!found)
-                printf("\nNao foram encontrados nenhum quarto com este numero!\n");
-
-            editar_quarto(quarto,n,i,opc);
-
-            limparTela();
-            printf("Ainda deseja continuar editando(S/N):");
-            opc = getche();
-            printf("\n");
-            if(opc == 'N' || opc == 'n'){
-                printf("Saindo...");
+        for(i=0;i<n;i++){
+            if(strcmp((quarto+i)->numero,num)==0){
+                mostrar_quarto(quarto,i);
+                found=1;
                 break;
             }
-        }else{
-            printf("Saindo...");
+        }
+        if(!found)
+            printf("\nNao foram encontrados nenhum quarto com este numero!\n");
+        else{
+
+            if(strcmp((quarto+i)->status,"Livre") == 0){
+                printf("O que voce deseja editar:");
+                printf("\n1-Tipo\n2-Valor da Diaria\n3-Alterar Tudo\n0-Sair\n");
+                opc = recebeUmNumero(opc);
+
+                if(opc != '0'){
+                    limparTela();            
+                    
+                    editar_quarto(quarto,n,i,opc);
+                    
+                    printf("Quarto editado com sucesso!");
+
+                    printf("Ainda deseja continuar editando(S/N):");
+                    opc = getche();
+                    printf("\n");
+                    if(opc == 'N' || opc == 'n'){
+                        printf("Saindo...");
+                        break;
+                    }
+                }else{
+                    printf("Saindo...");
+                }
+            }
+            else{
+                for(int i=0;i<n;i++){
+                    if(!(strcmp((quarto+i)->status,"Livre") == 0))
+                    q++;
+                }
+                if(q == n){
+                    printf("Todos os quartos estao reservados ou ocupados, por isso, nao eh possivel editar!\n");
+                    break;
+                }
+                printf("Nao foi possivel editar, o quarto esta reservado ou ocupado!\n");
+            }
         }
 
         limparTela();
@@ -326,13 +339,17 @@ void excluir_quarto(struct Quarto *quarto,int n){
         if(!found)
             printf("\nNao foram encontrados nenhum quarto com este numero!\n");
 
-        strcpy((quarto+i)->numero,"");
-        
-        cadastrarRegistradoQuartos(quarto,n);
-        
-        quarto = (struct Quarto *)realloc(quarto,(n-1)*sizeof(struct Cliente));
+        if(strcmp((quarto+i)->status,"Livre") == 0){
+            strcpy((quarto+i)->numero,"");
+            
+            cadastrarRegistradoQuartos(quarto,n);
+            
+            quarto = (struct Quarto *)realloc(quarto,(n-1)*sizeof(struct Cliente));
 
-        printf("\nQuarto Removido com Sucesso!!\n");
+            printf("\nQuarto Removido com Sucesso!!\n");
+        }else{
+            printf("Nao foi possivel remover, o quarto esta reservado ou ocupado!\n");
+        }
 
         printf("Ainda deseja continuar removendo(S/N):");
         opc = getche();

@@ -70,9 +70,9 @@ int main(){
     struct Cliente *cliente = (struct Cliente *)calloc(10,sizeof(struct Cliente));
     struct Financeiro *financeiro = (struct Financeiro *)calloc(10,sizeof(struct Financeiro));
     struct Reserva *reserva = (struct Reserva *)calloc(10,sizeof(struct Reserva));
-
+    
     char opc;
-
+    
     do{
         printf("---------------Menu---------------\n1 - Menu Quarto\n2 - Menu Cliente\n3 - Menu Reservas\n0 - Sair\n----------------------------------\n");
         opc = recebeUmNumero(opc);
