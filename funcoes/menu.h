@@ -22,16 +22,32 @@ void menu_quarto(struct Quarto *quarto){
         limparTela();
         switch(opc){
             case '1':
-                n = cadastrar_quarto(quarto,n);
+
+            n = cadastrar_quarto(quarto,n);
+            
             break;
             case '2':
+            if(n>0){
                 menu_consultar_quarto(quarto,n);
+            }else{
+                printf("Não ha quartos cadastrados para serem consultados");
+            }
             break;
             case '3':
-                menu_editarQuarto(quarto,n);
+            if(n>0){
+
+             menu_editarQuarto(quarto,n);
+
+            }else{
+                printf("Nao ha quartos cadastrados para serem editados");
+            }
             break;
             case '4':
+            if(n>0){
                 excluir_quarto(quarto,n);
+            }else{
+                printf("Nao ha quartos cadastrados para serem excluidos");
+            }
             break;
             case '0':
                 printf("Saindo...");
@@ -42,6 +58,7 @@ void menu_quarto(struct Quarto *quarto){
         limparTela();
     }while(opc != '0');
 }
+
 
 void menu_cliente(struct Cliente *cliente){
     int n = quantidadeCliente(cliente) - 1;
