@@ -75,13 +75,27 @@ void menu_cliente(struct Cliente *cliente){
                 n = cadastrar_cliente(cliente,n);
             break;
             case '2':
+                if(n>0){
                 menuConsultar(cliente,n);
+
+                }else{
+                    printf("Nao ha cliente cadastrados para serem consultados");
+
+                }
             break;
             case '3':
+                if(n>0){
                 menueditar(cliente,n);
+                }else{
+                    printf("Nao ha clienes cadastrados para uma consulta");
+                }
             break;
             case '4':
+            if(n>0){
                 excluir_cliente(cliente,n);
+            }else{
+                printf("Nao ha clientes para serem excluidos");
+            }
             break;
             case '0':
                 printf("Saindo...");
