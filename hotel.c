@@ -4,6 +4,8 @@
 #include<ctype.h>
 #include<time.h>
 
+/*Entrei*/
+
 struct Cliente{
     char nCT[50];
     char cpf[12];
