@@ -62,7 +62,7 @@ int cadastrar_cliente(struct Cliente *cliente,int n){
         do{
             verifica_n_int((cliente+i)->tel,3);
             if(verificaTEL(cliente,(cliente+i)->tel,i) == 0){
-                printf("\nEste RG ja esta registrado\n");
+                printf("\nEste telefone ja esta registrado\n");
             }
         }while(verificaTEL(cliente,(cliente+i)->tel,i) == 0);
         printf("\n");
@@ -78,7 +78,7 @@ int cadastrar_cliente(struct Cliente *cliente,int n){
                     if(verifica_email((cliente+i)->email) == 0)
                         printf("Error, nao coloque espaço no email:");
             }while(verifica_email((cliente+i)->email) == 0);
-        }while(verificaEmail(cliente,(cliente+i)->email,i));
+        }while(verificaEmail(cliente,(cliente+i)->email,i) == 0);
             
         fflush(stdin);
         
@@ -93,7 +93,6 @@ int cadastrar_cliente(struct Cliente *cliente,int n){
 
         i++;
         
-        cliente = (struct Cliente *)realloc(cliente,i*sizeof(struct Cliente));
         
         if(i != n){
             printf("Ainda deseja continuar cadastrando(S/N):");
@@ -106,6 +105,11 @@ int cadastrar_cliente(struct Cliente *cliente,int n){
         
         limparTela();
 
+    }
+    cliente = (struct Cliente *)realloc(cliente,i*sizeof(struct Cliente));
+
+    if(!cliente){
+        printf("Erro ao alocar na memoria");
     }
 
     fclose(arq);
@@ -159,11 +163,12 @@ void menuConsultar(struct Cliente *cliente,int n){
         printf("1-Nome\n2-CPF\n3-RG\n4-Telefone\n5-Endereco\n6-Email\n0-Sair\n");
         printf("\n------------------------------------------\n");
         opc = recebeUmNumero(opc);
-
-
+        
         limparTela();
 
         consultar_cliente(cliente,n,opc);
+
+        limparTela();
 
     }while(opc != '0');
 }
@@ -290,16 +295,14 @@ void menueditar(struct Cliente *cliente,int n){
             printf("-----------------------------------------\n");
             opc2 = recebeUmNumero(opc2);
 
-            
-            limparTela();
-
             if(opc2 != '0'){
                 i = consultar_cliente(cliente,n,opc2);
                 
-
+                limparTela();
+                
                 editar_cliente(cliente,n,i,opc);
 
-                limparTela();
+                
                 printf("Ainda deseja continuar editando(S/N):");
                 opc = getche();
                 printf("\n");
@@ -307,6 +310,7 @@ void menueditar(struct Cliente *cliente,int n){
                     printf("Saindo...");
                     break;
                 }
+                limparTela();
             }else{
                 printf("Saindo...");
             }

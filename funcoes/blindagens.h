@@ -278,9 +278,9 @@ void recebeData(char *dia,char *mes,char *ano){
 
 void valorDiaria(char *vR,char *v,int dia){
     float valor = atof(v) * dia;
-
-    printf("\nValor a pagar%.2f\n",valor);
-    
+    printf("\n---------------------------\n");
+    printf("Valor a pagar:R$%.2f",valor);
+    printf("\n---------------------------\n");
     sprintf(vR,"%.2f",valor);
 }
 

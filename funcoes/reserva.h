@@ -34,7 +34,7 @@ int realizar_reserva(struct Cliente *cliente,struct Quarto *quarto,struct Reserv
     int nC = quantidadeCliente(cliente) - 1;
     int nQ = quantidadeQuartos(quarto) - 1;
     
-    int i=0,j=0,z=0,deE,dsS,deE2=0,dsS2=0,ger=1000;
+    int i=0,j=0,z=0,deE,dsS,deE2=0,dsS2=0,ger;
     char num[4],opc,nome[50];
 
     mostrar_clientes(cliente,-1);
@@ -51,9 +51,9 @@ int realizar_reserva(struct Cliente *cliente,struct Quarto *quarto,struct Reserv
 
     nR += qtdQ;
     i = (nR - qtdQ);
+    
 
     while(i < nR){
-
 
         int erro = 0,quartoLivre=0,found = 0,foundC=0;
 
@@ -74,7 +74,7 @@ int realizar_reserva(struct Cliente *cliente,struct Quarto *quarto,struct Reserv
 
             printf("\nDigite o numero do quarto para reserva-lo:");
             recebeNumeroQuarto(num);
-            
+            /*Esta parando aqui*/
             for(j=0;j < nQ;j++){
                 if(strcmp((quarto+j)->numero,num) == 0){
                     found = 1;
@@ -86,15 +86,6 @@ int realizar_reserva(struct Cliente *cliente,struct Quarto *quarto,struct Reserv
             if(!found)
                 printf("O quarto com o respectivo numero, nao existe!");
             else{
-
-                if(i > 0){
-                    for(int a=0;a<i;a++){
-                        if(strcmp((reserva+a)->numeroQuarto,num) == 0){
-                            deE2 = dataAtoi((reserva+a)->dataEntrada.dia,(reserva+a)->dataEntrada.mes,(reserva+a)->dataEntrada.ano);;
-                            dsS2 = dataAtoi((reserva+a)->dataSaida.dia,(reserva+a)->dataSaida.mes,(reserva+a)->dataSaida.ano);;
-                        }
-                    }
-                }
                 do{
                     printf("\nInforme a data de entrada que voce deseja reservar o quarto %s:", num);
                     printf("\nInsira os dados no formato DD/MM/AAAA:");
@@ -115,14 +106,20 @@ int realizar_reserva(struct Cliente *cliente,struct Quarto *quarto,struct Reserv
                 // printf("\nData Entrada Depois %d - Data Saida Depois %d\n",deE,dsS);
                 // printf("Data Entrada Antes %d - Data Saida Antes %d\n",deE2,dsS2);
 
-                if(!(strcmp((quarto+j)->status,"Livre")==0)){
-                    if(verificaEntreData(deE,dsS,deE2,dsS2) == 0){
-                        erro = 1;
-                        printf("\nError, o seguinte quarto ja esta reservado nesta data!!\n");
-                        limparTela();
+                for(int a=0;a<i;a++){
+                    if(strcmp((reserva+a)->numeroQuarto,num) == 0){
+                        deE2 = dataAtoi((reserva+a)->dataEntrada.dia,(reserva+a)->dataEntrada.mes,(reserva+a)->dataEntrada.ano);
+                        dsS2 = dataAtoi((reserva+a)->dataSaida.dia,(reserva+a)->dataSaida.mes,(reserva+a)->dataSaida.ano);
+                    }
+                    if(!(strcmp((quarto+j)->status,"Livre")==0)){
+                        if(verificaEntreData(deE,dsS,deE2,dsS2) == 0){
+                            erro = 1;
+                            printf("\nError, o seguinte quarto ja esta reservado nesta data!!\n");
+                            limparTela();
+                        }
                     }
                 }
-
+                
                 if(erro){
                     for(int qL=0;qL<nQ;qL++){
                         if(strcmp((quarto+qL)->status,"Livre")==0){
@@ -173,16 +170,21 @@ int realizar_reserva(struct Cliente *cliente,struct Quarto *quarto,struct Reserv
                 if(found){
                     mostrar_quarto(quarto,j);
                 }
+
                 i++;
                 
-                reserva = (struct Reserva *)realloc(reserva,i*sizeof(struct Reserva));
 
                 limparTela();
 
             }
         }
     }
-    limparTela();
+    
+    reserva = (struct Reserva *)realloc(reserva,i*sizeof(struct Reserva));
+
+    if(!reserva){
+        printf("Erro ao alocar na memoria");
+    }
 
     fclose(arq);
     return i;
@@ -196,7 +198,7 @@ void mostrarReservas(struct Reserva *reserva,int i){
             printf("Codigo de reserva:%s\nNumero do Quarto:%s\nNome do Cliente:%s\nCPF do cliente:%s\n",(reserva+i)->codigoReserva,(reserva+i)->numeroQuarto,(reserva+i)->nomeCliente,(reserva+i)->cpfCliente);
             printf("Data de Entrada:%s/%s/%s\n",(reserva+i)->dataEntrada.dia,(reserva+i)->dataEntrada.mes,(reserva+i)->dataEntrada.ano);
             printf("Data de Saida:%s/%s/%s\n",(reserva+i)->dataSaida.dia,(reserva+i)->dataSaida.mes,(reserva+i)->dataSaida.ano);
-            printf("Valor Total:%s\nStatus do pagamento:%s\n",(reserva + i)->valorT,(reserva + i)->statusPagamento);
+            printf("Valor Total:R$%s\nStatus do pagamento:%s\n",(reserva + i)->valorT,(reserva + i)->statusPagamento);
             printf("-------------------------------\n"); 
         }
     }else{
@@ -204,7 +206,7 @@ void mostrarReservas(struct Reserva *reserva,int i){
             printf("Codigo de reserva:%s\nNumero do Quarto:%s\nNome do Cliente:%s\nCPF do cliente:%s\n",(reserva+i)->codigoReserva,(reserva+i)->numeroQuarto,(reserva+i)->nomeCliente,(reserva+i)->cpfCliente);
             printf("Data de Entrada:%s/%s/%s\n",(reserva+i)->dataEntrada.dia,(reserva+i)->dataEntrada.mes,(reserva+i)->dataEntrada.ano);
             printf("Data de Saida:%s/%s/%s\n",(reserva+i)->dataSaida.dia,(reserva+i)->dataSaida.mes,(reserva+i)->dataSaida.ano);
-            printf("Valor Total:%s\nStatus do pagamento:%s\n",(reserva + i)->valorT,(reserva + i)->statusPagamento);
+            printf("Valor Total:R$%s\nStatus do pagamento:%s\n",(reserva + i)->valorT,(reserva + i)->statusPagamento);
             printf("-------------------------------\n"); 
     }
 }
@@ -269,7 +271,7 @@ void menu_consultarReservas(struct Reserva *reserva,int nR){
         printf("\nComo voce deseja procurar a reserva\n");
         printf("1-Codigo de reserva\n2-Nome do Cliente\n0-Sair\n");
         opc = recebeUmNumero(opc);
-
+        //esse limpa tela é necessario?
         limparTela();
 
         if(opc != '0'){
@@ -318,7 +320,7 @@ int consultar_reservas(struct Reserva *reserva,int n,int opc){
                 }
             }
             if(!found)
-                printf("\nNao foram encontrados nenhuma reserva com este codigo!\n");
+                printf("\nNao foram encontrados nenhuma reserva com este nome!\n");
         break;
         case '0':
             printf("Saindo...");
@@ -349,7 +351,7 @@ int consultarDadosRes1(struct Reserva *reserva,int opc){
                 }
             }
             if(!found)
-                printf("\nNao foram encontrados nenhuma reserva com este codigo!\n");
+                printf("\nNao  foram encontrados nenhuma reserva com este codigo!\n");
         break;
 
         case '2':
@@ -396,7 +398,7 @@ int consultarDadosRes2(struct Reserva *reserva,int opc){
                 }
             }
             if(!found)
-                printf("\nNao foram encontrados nenhuma reserva com este codigo!\n");
+                printf("\nNao foram  encontrados nenhuma reserva com este codigo!\n");
         break;
 
         case '2':

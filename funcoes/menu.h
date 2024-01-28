@@ -10,11 +10,11 @@ void menu_cliente(struct Cliente *cliente);
 void menu_reservas(struct Cliente *cliente,struct Quarto *quarto,struct Reserva *reserva,struct Financeiro *financeiro);
 
 void menu_quarto(struct Quarto *quarto){
-    int n = quantidadeQuartos(quarto) - 1;
 
     char opc;
 
     do{
+        int n = quantidadeQuartos(quarto) - 1;
         printf("----------Menu do Quarto----------\n1 - Cadastrar Quarto\n2 - Consultar Quarto\n3 - Editar Quarto\n4 - Excluir Quarto\n0 - Voltar\n----------------------------------\n");
         opc = recebeUmNumero(opc);
         
@@ -30,22 +30,12 @@ void menu_quarto(struct Quarto *quarto){
             if(n>0){
                 menu_consultar_quarto(quarto,n);
             }else{
-<<<<<<< HEAD
                 printf("Nao ha quartos cadastrados para serem consultados");
-=======
-                printf("Não ha quartos cadastrados para serem consultados");
->>>>>>> 8fd4f449c6e9140c1b7d3d047e7d3c242f44d503
             }
             break;
             case '3':
             if(n>0){
-<<<<<<< HEAD
                 menu_editarQuarto(quarto,n);
-=======
-
-             menu_editarQuarto(quarto,n);
-
->>>>>>> 8fd4f449c6e9140c1b7d3d047e7d3c242f44d503
             }else{
                 printf("Nao ha quartos cadastrados para serem editados");
             }
@@ -67,12 +57,11 @@ void menu_quarto(struct Quarto *quarto){
     }while(opc != '0');
 }
 
-
 void menu_cliente(struct Cliente *cliente){
-    int n = quantidadeCliente(cliente) - 1;
     char opc;
     
     do{
+        int n = quantidadeCliente(cliente) - 1;
         printf("----------Menu do Cliente----------\n1 - Cadastrar Cliente\n2 - Consultar Cliente\n3 - Editar Cliente\n4 - Excluir Cliente\n0 - Voltar\n----------------------------------\n");
         opc = recebeUmNumero(opc);
         printf("\n");
@@ -84,26 +73,14 @@ void menu_cliente(struct Cliente *cliente){
             break;
             case '2':
                 if(n>0){
-<<<<<<< HEAD
                     menuConsultar(cliente,n);
                 }else{
                     printf("Nao ha cliente cadastrados para serem consultados");
-=======
-                menuConsultar(cliente,n);
-
-                }else{
-                    printf("Nao ha cliente cadastrados para serem consultados");
-
->>>>>>> 8fd4f449c6e9140c1b7d3d047e7d3c242f44d503
                 }
             break;
             case '3':
                 if(n>0){
-<<<<<<< HEAD
                     menueditar(cliente,n);
-=======
-                menueditar(cliente,n);
->>>>>>> 8fd4f449c6e9140c1b7d3d047e7d3c242f44d503
                 }else{
                     printf("Nao ha clienes cadastrados para uma consulta");
                 }
@@ -126,11 +103,10 @@ void menu_cliente(struct Cliente *cliente){
 }
 
 void menu_reservas(struct Cliente *cliente,struct Quarto *quarto,struct Reserva *reserva,struct Financeiro *financeiro){   
-    int nR = quantidade_Reservas(reserva) - 1;
-    int nP =  quantidadePagamentos(financeiro)-1;
-
     char opc;
     do{
+        int nR = quantidade_Reservas(reserva) - 1;
+        int nP =  quantidadePagamentos(financeiro)-1;
         printf("----------Menu do Reserva----------\n");
         printf("1 - Realizar Reserva\n2 - Realizar Check-In\n3 - Realizar pagamento\n4 - Consultar Reservas\n5 - Excluir Reserva\n6 - Valores Recebidos \n0 - Voltar\n");
         printf("----------------------------------\n");

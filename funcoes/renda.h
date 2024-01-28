@@ -21,7 +21,6 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
 
     struct tm *dHA;
     time_t segundos;
-    time(&segundos);
 
     int nP = quantidadePagamentos(financeiro) - 1;
     int nQ = quantidadeQuartos(quarto) - 1;
@@ -29,13 +28,8 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
     char opc;
     int i=-1,j = nP,p;
 
-<<<<<<< HEAD
     do{ 
-=======
-    do{
-        
-        
->>>>>>> 8fd4f449c6e9140c1b7d3d047e7d3c242f44d503
+        time(&segundos);
         printf("\nComo voce deseja procurar a reserva para check-in\n");
         printf("1-Codigo de reserva\n2-Nome do Cliente\n0-Sair\n");
         opc = recebeUmNumero(opc);
@@ -61,6 +55,7 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
                     strcpy((financeiro+j)->numeroQuarto,(quarto+p)->numero);
     
                     dHA = localtime(&segundos);
+
                     sprintf((financeiro+j)->horaEntrada.horas,"%d",dHA->tm_hour);
                     sprintf((financeiro+j)->horaEntrada.min,"%d",dHA->tm_min);
                     sprintf((financeiro+j)->horaEntrada.segundos,"%d",dHA->tm_sec);
@@ -81,21 +76,14 @@ void realizar_checkin(struct Reserva *reserva, struct Financeiro *financeiro,str
                     printf("\nSaindo...");
                     break;
                 }
-<<<<<<< HEAD
-
-=======
->>>>>>> 8fd4f449c6e9140c1b7d3d047e7d3c242f44d503
             }else if(strcmp((reserva+i)->statusPagamento,"Check-In") == 0){
                 printf("A reserva ja foi feita Check-In");
             }else if(strcmp((reserva+i)->statusPagamento,"Pago") == 0){
                 printf("A reserva ja foi realizado o pagamento");
-<<<<<<< HEAD
             }else if(i == -1 && opc == '1'){
                 printf("Reserva com o codigo de reserva nao encontrado!\n");
             }else if(i == -1 && opc == '2'){
                 printf("Reserva com o nome do cliente nao encontrado!\n");
-=======
->>>>>>> 8fd4f449c6e9140c1b7d3d047e7d3c242f44d503
             }
         }else{
             printf("\nSaindo...");
@@ -394,20 +382,19 @@ void valores_recebidos(struct Financeiro *financeiro){
         printf("1 - Todos\n2 - Intervalo de Tempo\n0 - Voltar\n");
         printf("------------------------------\n");
         opc = recebeUmNumero(opc);
-
+        /*Uaual*/
         switch (opc)
         {
         case '1':
             mostrarValores(financeiro,-1);
         break;
         case '2':
-            printf("Digite o inicio do intervalo da data:");
+            printf("\nDigite o inicio do intervalo da data:");
             recebeData(dia,mes,ano);
             data1 = dataJuliana(atoi(dia),atoi(mes),atoi(ano));
-            printf("Digite o fim do intervalo da data:");
+            printf("\nDigite o fim do intervalo da data:");
             recebeData(dia,mes,ano);
             data2 = dataJuliana(atoi(dia),atoi(mes),atoi(ano));
-
 
             for(int i=0;i<n;i++){
                 dataC = dataJuliana(atoi((financeiro+i)->dataSaida.dia),atoi((financeiro+i)->dataSaida.mes),atoi((financeiro+i)->dataSaida.ano));
@@ -428,5 +415,4 @@ void valores_recebidos(struct Financeiro *financeiro){
         }
         limparTela();
     }while(opc != '0');
-    
 }

@@ -50,20 +50,24 @@ int cadastrar_quarto(struct Quarto *quarto,int n) {
 
         i++;
 
-        quarto = (struct Quarto *)realloc(quarto,i*sizeof(struct Cliente));
 
-        if(i != n){
-            printf("Ainda deseja continuar cadastrando(S/N):");
-            opc = getche();
-            if(opc == 'N' || opc == 'n'){
-                printf("Saindo...");
-                break;
-            }
+        printf("Ainda deseja continuar cadastrando(S/N):");
+        opc = getche();
+        if(opc == 'N' || opc == 'n'){
+            printf("Saindo...");
+            break;
         }
 
         limparTela();
 
     }
+    
+    quarto = (struct Quarto *)realloc(quarto,i*sizeof(struct Quarto));
+    
+    if(!quarto){
+        printf("Erro ao alocar na memoria");
+    }
+
 
     fclose(arq);
 
@@ -94,7 +98,7 @@ void menu_consultar_quarto(struct Quarto *quarto,int n){
     mostrar_quarto(quarto,-1);
 
     do{
-        printf("\nComo voce deseja procurar o cliente\n");
+        printf("\nComo voce deseja procurar o quarto\n");
         printf("1-Numero\n2-Status\n3-Tipo\n4-Valor Diaria\n0-Sair\n");
         opc = recebeUmNumero(opc);
 
@@ -122,12 +126,12 @@ void mostrar_quarto(struct Quarto *quarto,int i){
     if(i == -1){
         for(i=0;i<n;i++){
             printf("\n-----------Quarto %d-----------\n",i+1);
-            printf("Numero do quarto:%s\nStatus do quarto:%s\nTipo do quarto:%s\nValor diaria do quarto:%s\n",(quarto+i)->numero,(quarto+i)->status,(quarto+i)->tipo,(quarto+i)->valorDiaria);
+            printf("Numero do quarto:%s\nStatus do quarto:%s\nTipo do quarto:%s\nValor diaria do quarto:R$%s\n",(quarto+i)->numero,(quarto+i)->status,(quarto+i)->tipo,(quarto+i)->valorDiaria);
             printf("-------------------------------\n"); 
         }
     }else{
         printf("\n-----------Quarto %d-----------\n",i+1);
-        printf("Numero do quarto:%s\nStatus do quarto:%s\nTipo do quarto:%s\nValor diaria do quarto:%s\n",(quarto+i)->numero,(quarto+i)->status,(quarto+i)->tipo,(quarto+i)->valorDiaria);
+        printf("Numero do quarto:%s\nStatus do quarto:%s\nTipo do quarto:%s\nValor diaria do quarto:R$%s\n",(quarto+i)->numero,(quarto+i)->status,(quarto+i)->tipo,(quarto+i)->valorDiaria);
         printf("-------------------------------\n"); 
     }
 }
@@ -272,6 +276,13 @@ void menu_editarQuarto(struct Quarto *quarto,int n){
                 printf("Nao foi possivel editar, o quarto esta reservado ou ocupado!\n");
             }
         }
+        printf("Ainda deseja continuar editando(S/N):");
+        opc = getche();
+        printf("\n");
+        if(opc == 'N' || opc == 'n'){
+            printf("Saindo...");
+            break;
+        }
 
         limparTela();
     }while(opc != '0');
@@ -325,7 +336,7 @@ void excluir_quarto(struct Quarto *quarto,int n){
 
     while(1){
         printf("\n--------------------------------------------------------\n");
-        printf("Por favor, digite o numero do quarto que deseja editar:\n");
+        printf("Por favor, digite o numero do quarto que deseja apagar:\n");
         printf("----------------------------------------------------------\n");
         verifica_n_int(num,0);
 
